@@ -230,22 +230,18 @@ with col2:
         st.markdown("### 📈 Demand Forecast Visualization")
 
 
-        # Prepare data for static plot (always show full forecast)
+        # Streamlit widget for confidence interval toggle only
         show_conf = st.checkbox("Show Confidence Interval", value=True)
         dates = pred_mean.index
         forecast_vals = pred_mean.values
         conf_upper = conf_int.iloc[:, 1].values
         conf_lower = conf_int.iloc[:, 0].values
-        frame_dates = dates
-        frame_forecast = forecast_vals
-        frame_upper = conf_upper
-        frame_lower = conf_lower
 
         fig = go.Figure()
-        # Add forecast line (animated)
+        # Add forecast line (static)
         fig.add_trace(go.Scatter(
-            x=frame_dates,
-            y=frame_forecast,
+            x=dates,
+            y=forecast_vals,
             mode='lines+markers',
             name='Demand Forecast',
             line=dict(color='#2c5aa0', width=3),
@@ -255,16 +251,16 @@ with col2:
         # Add confidence interval if toggled
         if show_conf:
             fig.add_trace(go.Scatter(
-                x=frame_dates,
-                y=frame_upper,
+                x=dates,
+                y=conf_upper,
                 mode='lines',
                 line=dict(color='rgba(44, 90, 160, 0)'),
                 showlegend=False,
                 hoverinfo='skip'
             ))
             fig.add_trace(go.Scatter(
-                x=frame_dates,
-                y=frame_lower,
+                x=dates,
+                y=conf_lower,
                 mode='lines',
                 line=dict(color='rgba(44, 90, 160, 0)'),
                 fill='tonexty',
