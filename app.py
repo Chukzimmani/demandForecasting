@@ -225,42 +225,64 @@ with col2:
                 delta=f"Day {pred_mean.idxmin().strftime('%m-%d')}"
             )
 
-        # Enhanced plotting with Plotly
-        st.markdown("### 📈 Demand Forecast Visualization")
-        
-        # Create interactive Plotly chart
-        fig = go.Figure()
 
-        # Add forecast line
+        # Enhanced plotting with Plotly and animation
+        st.markdown("### 📈 Demand Forecast Visualization")
+
+        # Streamlit widgets for interactivity
+        show_conf = st.checkbox("Show Confidence Interval", value=True)
+        animate = st.checkbox("Animate Forecast", value=True)
+
+        # Prepare data for animation
+        dates = pred_mean.index
+        forecast_vals = pred_mean.values
+        conf_upper = conf_int.iloc[:, 1].values
+        conf_lower = conf_int.iloc[:, 0].values
+
+        if animate:
+            # Animation: reveal forecast day by day
+            frame_slider = st.slider("Animation Frame (Day)", 1, len(dates), 1, 1)
+            frame_dates = dates[:frame_slider]
+            frame_forecast = forecast_vals[:frame_slider]
+            frame_upper = conf_upper[:frame_slider]
+            frame_lower = conf_lower[:frame_slider]
+        else:
+            frame_dates = dates
+            frame_forecast = forecast_vals
+            frame_upper = conf_upper
+            frame_lower = conf_lower
+
+        fig = go.Figure()
+        # Add forecast line (animated)
         fig.add_trace(go.Scatter(
-            x=pred_mean.index,
-            y=pred_mean.values,
+            x=frame_dates,
+            y=frame_forecast,
             mode='lines+markers',
             name='Demand Forecast',
             line=dict(color='#2c5aa0', width=3),
             marker=dict(size=6, color='#2c5aa0')
         ))
 
-        # Add confidence interval
-        fig.add_trace(go.Scatter(
-            x=pred_mean.index,
-            y=conf_int.iloc[:, 1],
-            mode='lines',
-            line=dict(color='rgba(44, 90, 160, 0)'),
-            showlegend=False,
-            hoverinfo='skip'
-        ))
-
-        fig.add_trace(go.Scatter(
-            x=pred_mean.index,
-            y=conf_int.iloc[:, 0],
-            mode='lines',
-            line=dict(color='rgba(44, 90, 160, 0)'),
-            fill='tonexty',
-            fillcolor='rgba(44, 90, 160, 0.2)',
-            name='Confidence Interval',
-            hoverinfo='skip'
-        ))
+        # Add confidence interval if toggled
+        if show_conf:
+            fig.add_trace(go.Scatter(
+                x=frame_dates,
+                y=frame_upper,
+                mode='lines',
+                line=dict(color='rgba(44, 90, 160, 0)'),
+                showlegend=False,
+                hoverinfo='skip'
+            ))
+            fig.add_trace(go.Scatter(
+                x=frame_dates,
+                y=frame_lower,
+                mode='lines',
+                line=dict(color='rgba(44, 90, 160, 0)'),
+                fill='tonexty',
+                fillcolor='rgba(44, 90, 160, 0.2)',
+                name='Confidence Interval',
+                hoverinfo='skip'
+            ))
 
         # Update layout
         fig.update_layout(
@@ -281,11 +303,8 @@ with col2:
                 x=0.01
             )
         )
-
-        # Add grid and styling
         fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128, 128, 128, 0.2)')
         fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128, 128, 128, 0.2)')
-
         st.plotly_chart(fig, use_container_width=True)
 
         # Additional insights section
