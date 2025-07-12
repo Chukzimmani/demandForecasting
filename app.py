@@ -16,60 +16,159 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for better styling
-st.markdown("""
-<style>
-    .main-header {
-        background: linear-gradient(135deg, #2c5aa0 0%, #1e3a5f 100%);
-        padding: 2rem;
-        border-radius: 15px;
-        margin-bottom: 2rem;
-        text-align: center;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-    .main-header h1 {
-        color: white;
-        margin: 0;
-        font-size: 3rem;
-        font-weight: 700;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-    .main-header p {
-        color: #e8f4f8;
-        margin: 0.5rem 0 0 0;
-        font-size: 1.2rem;
-        opacity: 0.9;
-    }
-    .metric-card {
-        background: white;
-        padding: 1rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        text-align: center;
-    }
-    .sidebar-header {
-        background: linear-gradient(135deg, #2c5aa0 0%, #1e3a5f 100%);
-        padding: 1rem;
-        border-radius: 10px;
-        margin-bottom: 1rem;
-        color: white;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .stInfo > div {
-        background-color: #f8fafc;
-        border-left: 4px solid #2c5aa0;
-        padding: 1rem;
-        border-radius: 8px;
-    }
-    .stSuccess > div {
-        background-color: #f0f9f4;
-        border-left: 4px solid #22c55e;
-        padding: 1rem;
-        border-radius: 8px;
-    }
-</style>
-""", unsafe_allow_html=True)
+
+# --- Theme Toggle Logic ---
+if 'dark_mode' not in st.session_state:
+    st.session_state['dark_mode'] = False
+
+with st.sidebar:
+    st.markdown("---")
+    dark_mode = st.toggle("🌙 Dark Mode", value=st.session_state['dark_mode'])
+    st.session_state['dark_mode'] = dark_mode
+
+if st.session_state['dark_mode']:
+    custom_css = """
+    <style>
+        html, body, .main, .block-container, .main-header, .sidebar-header, .metric-card, .stInfo > div, .stSuccess > div {
+            background: #181c20 !important;
+            color: #fff !important;
+            transition: background 0.3s, color 0.3s;
+        }
+        * {
+            color: #fff !important;
+        }
+        .main-header {
+            background: linear-gradient(135deg, #181c20 0%, #2c5aa0 100%);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+        }
+        .main-header h1, .main-header p, .sidebar-header, .sidebar-header h3 {
+            color: #fff !important;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+        }
+        .metric-card, .stInfo > div, .stSuccess > div {
+            background: #23272f !important;
+            color: #fff !important;
+            border-left: 4px solid #4f8cff;
+        }
+        .stSuccess > div {
+            border-left: 4px solid #22c55e;
+        }
+        .sidebar-header {
+            background: linear-gradient(135deg, #23272f 0%, #2c5aa0 100%);
+        }
+        /* Style Streamlit widgets for dark mode */
+        .stSlider > div, .stNumberInput > div, .stTextInput > div, .stDateInput > div, .stCheckbox > div, .stToggle > div {
+            background: #23272f !important;
+            color: #fff !important;
+            border-radius: 8px;
+            border: 1px solid #4f8cff !important;
+            transition: background 0.3s, color 0.3s;
+        }
+        .stSlider .rc-slider-track, .stSlider .rc-slider-handle {
+            background: #4f8cff !important;
+            border-color: #4f8cff !important;
+        }
+        .stButton > button {
+            background: #4f8cff !important;
+            color: #fff !important;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background 0.3s, color 0.3s;
+        }
+        .stButton > button:hover {
+            background: #2c5aa0 !important;
+        }
+        /* Forecast Analytics Table Styling */
+        .stDataFrame, .stTable {
+            background: #23272f !important;
+            color: #fff !important;
+            border-radius: 8px;
+        }
+        .stDataFrame th, .stDataFrame td, .stTable th, .stTable td {
+            background: #23272f !important;
+            color: #fff !important;
+        }
+        .stMarkdown, .stText, .stCaption, .stMetric {
+            color: #fff !important;
+        }
+        .stMetric label {
+            color: #b0c4d4 !important;
+        }
+        /* Chart backgrounds */
+        .js-plotly-plot .plotly {
+            background: #181c20 !important;
+        }
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+            background: #23272f;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4f8cff;
+            border-radius: 8px;
+        }
+        /* Widget focus/hover */
+        .stSlider > div:focus-within, .stNumberInput > div:focus-within, .stTextInput > div:focus-within, .stDateInput > div:focus-within, .stCheckbox > div:focus-within, .stToggle > div:focus-within {
+            box-shadow: 0 0 0 2px #4f8cff;
+        }
+    </style>
+    """
+else:
+    custom_css = """
+    <style>
+        .main-header {
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3a5f 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .main-header h1 {
+            color: white;
+            margin: 0;
+            font-size: 3rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .main-header p {
+            color: #e8f4f8;
+            margin: 0.5rem 0 0 0;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .metric-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .sidebar-header {
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3a5f 100%);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            color: white;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .stInfo > div {
+            background-color: #f8fafc;
+            border-left: 4px solid #2c5aa0;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        .stSuccess > div {
+            background-color: #f0f9f4;
+            border-left: 4px solid #22c55e;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+    </style>
+    """
+st.markdown(custom_css, unsafe_allow_html=True)
 
 # Header section
 st.markdown("""
@@ -244,8 +343,8 @@ with col2:
             y=forecast_vals,
             mode='lines+markers',
             name='Demand Forecast',
-            line=dict(color='#2c5aa0', width=3),
-            marker=dict(size=6, color='#2c5aa0')
+            line=dict(color='#4f8cff' if st.session_state['dark_mode'] else '#2c5aa0', width=3),
+            marker=dict(size=6, color='#4f8cff' if st.session_state['dark_mode'] else '#2c5aa0')
         ))
 
         # Add confidence interval if toggled
@@ -254,7 +353,7 @@ with col2:
                 x=dates,
                 y=conf_upper,
                 mode='lines',
-                line=dict(color='rgba(44, 90, 160, 0)'),
+                line=dict(color='rgba(79, 140, 255, 0)' if st.session_state['dark_mode'] else 'rgba(44, 90, 160, 0)'),
                 showlegend=False,
                 hoverinfo='skip'
             ))
@@ -262,9 +361,9 @@ with col2:
                 x=dates,
                 y=conf_lower,
                 mode='lines',
-                line=dict(color='rgba(44, 90, 160, 0)'),
+                line=dict(color='rgba(79, 140, 255, 0)' if st.session_state['dark_mode'] else 'rgba(44, 90, 160, 0)'),
                 fill='tonexty',
-                fillcolor='rgba(44, 90, 160, 0.2)',
+                fillcolor='rgba(79, 140, 255, 0.18)' if st.session_state['dark_mode'] else 'rgba(44, 90, 160, 0.2)',
                 name='Confidence Interval',
                 hoverinfo='skip'
             ))
@@ -274,22 +373,25 @@ with col2:
             title=dict(
                 text="Fashion Demand Forecast with Confidence Intervals",
                 x=0.5,
-                font=dict(size=20, color='#1e3a5f')
+                font=dict(size=20, color='#f3f6fa' if st.session_state['dark_mode'] else '#1e3a5f')
             ),
             xaxis_title="Date",
             yaxis_title="Units Sold",
             hovermode='x unified',
-            template='plotly_white',
+            template='plotly_dark' if st.session_state['dark_mode'] else 'plotly_white',
+            paper_bgcolor='#181c20' if st.session_state['dark_mode'] else 'white',
+            plot_bgcolor='#181c20' if st.session_state['dark_mode'] else 'white',
             height=500,
             legend=dict(
                 yanchor="top",
                 y=0.99,
                 xanchor="left",
-                x=0.01
+                x=0.01,
+                font=dict(color='#f3f6fa' if st.session_state['dark_mode'] else '#1e3a5f')
             )
         )
-        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128, 128, 128, 0.2)')
-        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128, 128, 128, 0.2)')
+        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(79, 140, 255, 0.15)' if st.session_state['dark_mode'] else 'rgba(128, 128, 128, 0.2)', color='#f3f6fa' if st.session_state['dark_mode'] else '#1e3a5f')
+        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(79, 140, 255, 0.15)' if st.session_state['dark_mode'] else 'rgba(128, 128, 128, 0.2)', color='#f3f6fa' if st.session_state['dark_mode'] else '#1e3a5f')
         st.plotly_chart(fig, use_container_width=True)
 
         # Additional insights section
