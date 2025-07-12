@@ -229,34 +229,21 @@ with col2:
         # Enhanced plotting with Plotly and animation
         st.markdown("### 📈 Demand Forecast Visualization")
 
-        # Streamlit widgets for interactivity
-        show_conf = st.checkbox("Show Confidence Interval", value=True)
-        animate = st.checkbox("Animate Forecast", value=True)
 
-        # Prepare data for animation
+        # Streamlit widget for confidence interval toggle only
+        show_conf = st.checkbox("Show Confidence Interval", value=True)
+
+        # Prepare data for static plot
         dates = pred_mean.index
         forecast_vals = pred_mean.values
         conf_upper = conf_int.iloc[:, 1].values
         conf_lower = conf_int.iloc[:, 0].values
 
-        if animate:
-            # Animation: reveal forecast day by day
-            frame_slider = st.slider("Animation Frame (Day)", 1, len(dates), 1, 1)
-            frame_dates = dates[:frame_slider]
-            frame_forecast = forecast_vals[:frame_slider]
-            frame_upper = conf_upper[:frame_slider]
-            frame_lower = conf_lower[:frame_slider]
-        else:
-            frame_dates = dates
-            frame_forecast = forecast_vals
-            frame_upper = conf_upper
-            frame_lower = conf_lower
-
         fig = go.Figure()
-        # Add forecast line (animated)
+        # Add forecast line (static)
         fig.add_trace(go.Scatter(
-            x=frame_dates,
-            y=frame_forecast,
+            x=dates,
+            y=forecast_vals,
             mode='lines+markers',
             name='Demand Forecast',
             line=dict(color='#2c5aa0', width=3),
@@ -266,16 +253,16 @@ with col2:
         # Add confidence interval if toggled
         if show_conf:
             fig.add_trace(go.Scatter(
-                x=frame_dates,
-                y=frame_upper,
+                x=dates,
+                y=conf_upper,
                 mode='lines',
                 line=dict(color='rgba(44, 90, 160, 0)'),
                 showlegend=False,
                 hoverinfo='skip'
             ))
             fig.add_trace(go.Scatter(
-                x=frame_dates,
-                y=frame_lower,
+                x=dates,
+                y=conf_lower,
                 mode='lines',
                 line=dict(color='rgba(44, 90, 160, 0)'),
                 fill='tonexty',
