@@ -229,28 +229,17 @@ with col2:
         # Enhanced plotting with Plotly and animation
         st.markdown("### 📈 Demand Forecast Visualization")
 
-        # Streamlit widgets for interactivity
-        show_conf = st.checkbox("Show Confidence Interval", value=True)
-        animate = st.checkbox("Animate Forecast", value=True)
 
-        # Prepare data for animation
+        # Prepare data for static plot (always show full forecast)
+        show_conf = st.checkbox("Show Confidence Interval", value=True)
         dates = pred_mean.index
         forecast_vals = pred_mean.values
         conf_upper = conf_int.iloc[:, 1].values
         conf_lower = conf_int.iloc[:, 0].values
-
-        if animate:
-            # Animation: reveal forecast day by day
-            frame_slider = st.slider("Animation Frame (Day)", 1, len(dates), 1, 1)
-            frame_dates = dates[:frame_slider]
-            frame_forecast = forecast_vals[:frame_slider]
-            frame_upper = conf_upper[:frame_slider]
-            frame_lower = conf_lower[:frame_slider]
-        else:
-            frame_dates = dates
-            frame_forecast = forecast_vals
-            frame_upper = conf_upper
-            frame_lower = conf_lower
+        frame_dates = dates
+        frame_forecast = forecast_vals
+        frame_upper = conf_upper
+        frame_lower = conf_lower
 
         fig = go.Figure()
         # Add forecast line (animated)
