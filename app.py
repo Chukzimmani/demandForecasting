@@ -396,11 +396,13 @@ with col2:
 
         # Additional insights section
         st.markdown("### 🔍 Market Intelligence")
-        
+
         # Calculate additional insights
         demand_trend = "increasing" if pred_mean.iloc[-1] > pred_mean.iloc[0] else "decreasing"
         price_competitiveness = "competitive" if price <= competitor_price else "premium"
         demand_volatility = pred_mean.std()
+        volatility_level = "low" if demand_volatility < 10 else "moderate" if demand_volatility < 20 else "high"
+        discount_impact = "strong" if discount > 15 else "moderate" if discount > 5 else "minimal"
         
         # Create insight cards with better styling
         insight_col1, insight_col2 = st.columns(2)
@@ -413,7 +415,7 @@ with col2:
             st.markdown("**💡 Key Market Insights**")
             
             # Price Strategy
-            st.markdown("💰 **Price Strategy:** $" + str(int(price)) + " is " + price_competitiveness + " vs competitor $" + str(int(competitor_price)))
+            st.markdown("💰 **Price Strategy:** " + str(int(price)) + " dollar" + " is " + price_competitiveness + " vs competitor " + str(int(competitor_price)) + " dollar")
             
             # Demand Trend  
             st.markdown("📈 **Demand Trend:** " + demand_trend.title() + " pattern over " + str(forecast_days) + " days")
